@@ -1,4 +1,4 @@
-# Load health data into postgres
+# Load food data into postgres
 
 import csv
 import psycopg2
@@ -20,13 +20,10 @@ with open('/fooddata/FOOD NAME.csv', encoding="cp1252") as csvfile:
     foodNameCsv = csv.reader(csvfile)
     for row in foodNameCsv:
         if firstRow:
+            # skip the first row
             firstRow = False
         else:
             addFood(row)
 
-        #print(', '.join(row))
-        #count = count + 1
-        #if count > 10:
-        #    exit()
 
 conn.close()
