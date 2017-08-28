@@ -16,7 +16,7 @@ def addFood(row):
 
 def addNutrient(row):
     cur = conn.cursor()
-    # print('adding nutrient %s, %s' % (row[0], row[1]))
+    print('adding nutrient %s, %s' % (row[0], row[1]))
     cur.execute(
     """INSERT INTO nutrient_name (id, nutrient_code, symbol, nutrient_unit, name, nutrient_decimals )
     VALUES (%s, %s, %s, %s, %s, %s);""",
@@ -25,17 +25,11 @@ def addNutrient(row):
 
 def addNutrientAmount(row):
     cur = conn.cursor()
-    try:
-        # print('adding nutrient amount %s, %s' % (row[0], row[1]))
-        cur.execute(
-        """INSERT INTO nutrient_amount (food_id, nutrient_id, nutrient_value )
-        VALUES (%s, %s, %s);""",
-        [int(row[0]), int(row[1]), float(row[2])])
-        conn.commit()
-    except psycopg2.IntegrityError as inst:
-        print('Could not add nutrient amount %s, %s' % (row[0], row[1]) )
-        cur.close()
-        conn.rollback()
+    cur.execute(
+    """INSERT INTO nutrient_amount (food_id, nutrient_id, nutrient_value )
+    VALUES (%s, %s, %s);""",
+    [int(row[0]), int(row[1]), float(row[2])])
+    conn.commit()
 
 def addMeasureName(row):
     cur = conn.cursor()
@@ -46,17 +40,12 @@ def addMeasureName(row):
     conn.commit()
 
 def addConversionFactor(row):
-    try:
-        cur = conn.cursor()
-        cur.execute(
-        """INSERT INTO conversion_factor (food_id, measure_id, conversion_factor)
-        VALUES (%s, %s, %s);""",
-        [int(row[0]), int(row[1]), float(row[2])])
-        conn.commit()
-    except psycopg2.IntegrityError as inst:
-        print('Could not add conversion_factor %s, %s, %s' % (row[0], row[1], row[2]) )
-        cur.close()
-        conn.rollback()
+    cur = conn.cursor()
+    cur.execute(
+    """INSERT INTO conversion_factor (food_id, measure_id, conversion_factor)
+    VALUES (%s, %s, %s);""",
+    [int(row[0]), row[1], float(row[2])])
+    conn.commit()
 
 def loadData(filename, addFunction):
     firstRow = True
@@ -72,7 +61,7 @@ def loadData(filename, addFunction):
 def main():
     loadData('/fooddata/NUTRIENT NAME.csv', addNutrient)
     loadData('/fooddata/FOOD NAME.csv', addFood)
-    #loadData('/fooddata/NUTRIENT AMOUNT.csv', addNutrientAmount)
+    loadData('/fooddata/NUTRIENT AMOUNT.csv', addNutrientAmount)
     loadData('/fooddata/MEASURE NAME.csv', addMeasureName)
     loadData('/fooddata/CONVERSION FACTOR.csv', addConversionFactor)
 
